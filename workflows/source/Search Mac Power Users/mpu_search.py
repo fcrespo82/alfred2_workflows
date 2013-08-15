@@ -33,7 +33,7 @@ def get_episodes_in_page(page):
 
 def add_episode_to_cache(cache, episode):
     episode_number = episode[0].zfill(4)
-    if not cache.has_key(episode_number):
+    if episode_number not in cache:
         cache[episode_number] = episode
         return True
     return False
@@ -43,14 +43,14 @@ def cache_all(cache):
         episodes_in_page_i = get_episodes_in_page(i)
         for episode in episodes_in_page_i:
             #print "Caching episode {0}".format(episode[0])
-            print item_template.format(episode[0], episode[1], episode[2], 'yes')
+            print(item_template.format(episode[0], episode[1], episode[2], 'yes'))
             add_episode_to_cache(cache, episode)
 
 def list_all():
     for i in range(1, 20): # Pick last 20 pages to cache all episodes
         episodes_in_page_i = get_episodes_in_page(i)
         for episode in episodes_in_page_i:
-            print item_template.format(episode[0], episode[1], episode[2], 'yes')
+            print(item_template.format(episode[0], episode[1], episode[2], 'yes'))
 
 def main(argv):
     global query
@@ -80,7 +80,7 @@ def main(argv):
             str(cached_items[item][1]).lower() + " " + \
             str(cached_items[item][2]).lower()
             if query.lower() in search_in:
-                print item_template.format(cached_items[item][0], cached_items[item][1], cached_items[item][2], 'yes')
+                print(item_template.format(cached_items[item][0], cached_items[item][1], cached_items[item][2], 'yes'))
     else:
         print(item_template.format(0, "Error", "Could not read cache file", 'no'))
 
