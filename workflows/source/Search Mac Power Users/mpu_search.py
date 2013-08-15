@@ -1,17 +1,17 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# title:    Search Mac Power Users show notes
-# author:   Fernando Xavier de Freitas Crespo
-# email:    fernando@crespo.in
+# require:  beautifulsoup4, requests, lxml, re, shelve
 
-# require:  bs4, requests, lxml, re, shelve
+__title__ = "Search Mac Power Users show notes"
+__author__ = "Fernando Xavier de Freitas Crespo"
+__author_email__ = "fernando@crespo.in"
 
 from bs4 import BeautifulSoup
+import sys
 import requests
 import re
 import shelve
-from pprint import pprint # just for development
 
 query = "{query}"
 
@@ -52,7 +52,12 @@ def list_all():
         for episode in episodes_in_page_i:
             print item_template.format(episode[0], episode[1], episode[2], 'yes')
 
-def main():
+def main(argv):
+    global query
+
+    if len(argv) >= 1:
+        query = argv[0]
+
     cached_items = shelve.open('episodes_cache')
 
     if not cached_items:
@@ -84,4 +89,4 @@ def main():
     cached_items.close()
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
