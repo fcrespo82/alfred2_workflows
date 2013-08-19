@@ -4,7 +4,7 @@ setup(
     name = "mpu_search",
     scripts = ["mpu_search.py"],
     requires = ["beautifulsoup4", "requests", "lxml", "re", "shelve", "sys"],
-    version = "1.0",
+    version = "1.1",
     description = "Search Mac Power Users show notes",
     author = "Fernando Xavier de Freitas Crespo",
     author_email = "fernando@crespo.in",
