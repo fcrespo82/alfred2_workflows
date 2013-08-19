@@ -71,8 +71,10 @@ def main(argv):
 
     if cached_items:
         # Force get lastest 10 episodes (firs page) to keep up to date
-        episodes_in_page_0 = get_episodes_in_page(0)
-        for episode in episodes_in_page_0:
+        #print('Getting latest 10 episodes')
+        episodes_in_page_1 = get_episodes_in_page(1)
+        for episode in episodes_in_page_1:
+            #print('Found episode {0}, caching it'.format(episode))
             add_episode_to_cache(cached_items, episode)
 
         for item in sorted_cached_items:
