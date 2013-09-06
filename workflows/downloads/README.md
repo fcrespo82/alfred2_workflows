@@ -4,8 +4,8 @@ All workflows are just download and install, except when listed below.
 
 ## Workflows
 
-* [Search Mac Power Users show notes](#searchmacpowerusersshownotes)
-* [Search The Prompt show notes](#searchthepromptshownotes)
+* [Search Mac Power Users show notes](#search-mac-power-users-show-notes)
+* [Search The Prompt show notes](#search-the-prompt-show-notes)
 
 - - -
 
