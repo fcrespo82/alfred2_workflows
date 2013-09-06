@@ -3,10 +3,10 @@
 
 # requires: beautifulsoup4, requests, lxml, re, shelve, sys
 
-__title__ = "Search Mac Power Users show notes"
+__title__ = "Search 'The Prompt' show notes"
 __author__ = "Fernando Xavier de Freitas Crespo"
 __author_email__ = "fernando@crespo.in"
-__version__ = "1.2"
+__version__ = "1.0"
 
 from bs4 import BeautifulSoup
 import sys
@@ -20,7 +20,7 @@ item_template='  <item arg="{0}" valid="{3}" autocomplete="{0}"><title><![CDATA[
 
 def get_episodes_in_page(page):
     episodes = []
-    url = 'http://5by5.tv/mpu/page/{0}'
+    url = 'http://5by5.tv/prompt/page/{0}'
     response = requests.get(url.format(page))
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'lxml')
