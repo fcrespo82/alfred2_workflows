@@ -3,19 +3,27 @@
 
 # requires: beautifulsoup4, requests, lxml, re, shelve, sys
 
+## CONFIG
+DAYS_OF_CACHE = 5
+## END CONFIG
+
 __title__ = "Search Mac Power Users show notes"
 __author__ = "Fernando Xavier de Freitas Crespo"
 __author_email__ = "fernando@crespo.in"
-__version__ = "1.2"
+__version__ = "1.3"
 
 from bs4 import BeautifulSoup
 import sys
 import requests
 import re
 import shelve
+import os
+import datetime
+
+def must_update_cache():
+    return datetime.datetime.fromtimestamp(os.path.getmtime('episodes_cache.db')) < datetime.datetime.now() - datetime.timedelta(days=DAYS_OF_CACHE)
 
 query = "{query}"
-
 item_template='  <item arg="{0}" valid="{3}" autocomplete="{0}"><title><![CDATA[{1}]]></title><subtitle><![CDATA[{2}]]></subtitle><icon>icon.png</icon></item>'
 
 def get_episodes_in_page(page):
@@ -73,10 +81,11 @@ def main(argv):
     if cached_items:
         # Force get lastest 10 episodes (firs page) to keep up to date
         #print('Getting latest 10 episodes')
-        episodes_in_page_1 = get_episodes_in_page(1)
-        for episode in episodes_in_page_1:
-            #print('Found episode {0}, caching it'.format(episode))
-            add_episode_to_cache(cached_items, episode)
+        if must_update_cache():
+            episodes_in_page_1 = get_episodes_in_page(1)
+            for episode in episodes_in_page_1:
+                #print('Found episode {0}, caching it'.format(episode))
+                add_episode_to_cache(cached_items, episode)
 
         for item in sorted_cached_items:
             search_in = str(cached_items[item][0]).lower() + " " + \
