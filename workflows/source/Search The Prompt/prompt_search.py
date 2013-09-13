@@ -4,7 +4,7 @@
 # requires: beautifulsoup4, requests, lxml, re, shelve, sys
 
 ## CONFIG
-DAYS_OF_CACHE = 5
+DAYS_OF_CACHE = 1
 ## END CONFIG
 
 __title__ = "Search 'The Prompt' show notes"
@@ -50,8 +50,7 @@ def cache_all(cache):
     for i in range(1, 3): # Pick last 20 pages to cache all episodes
         episodes_in_page_i = get_episodes_in_page(i)
         for episode in episodes_in_page_i:
-            #print "Caching episode {0}".format(episode[0])
-            print(item_template.format(episode[0], episode[1], episode[2], 'yes'))
+            #print(item_template.format(episode[0], episode[1], episode[2], 'yes'))
             add_episode_to_cache(cache, episode)
 
 def list_all():
@@ -60,31 +59,33 @@ def list_all():
         for episode in episodes_in_page_i:
             print(item_template.format(episode[0], episode[1], episode[2], 'yes'))
 
+def cache_page_1(cached_items):
+    episodes_in_page_1 = get_episodes_in_page(1)
+    for episode in episodes_in_page_1:
+        add_episode_to_cache(cached_items, episode)
+
 def main(argv):
     global query
 
     if len(argv) >= 1:
         query = argv[0]
 
-    cached_items = shelve.open('episodes_cache.db')
+    cached_items = shelve.open('episodes_cache')
 
     if not cached_items:
         cache_all(cached_items)
         cached_items.close()
-        cached_items = shelve.open('episodes_cache.db')
+        cached_items = shelve.open('episodes_cache')
 
     sorted_cached_items = sorted(cached_items, reverse=True)
 
     print('<?xml version="1.0" encoding="UTF-8"?>\n<items>')
 
     if cached_items:
-        # Force get lastest 10 episodes (firs page) to keep up to date
-        #print('Getting latest 10 episodes')
         if must_update_cache():
-            episodes_in_page_1 = get_episodes_in_page(1)
-            for episode in episodes_in_page_1:
-                #print('Found episode {0}, caching it'.format(episode))
-                add_episode_to_cache(cached_items, episode)
+            print(item_template.format("", "Cache updated", "Make your search again", "no"))
+            cache_page_1(cached_items)
+            sorted_cached_items = sorted(cached_items, reverse=True)
 
         for item in sorted_cached_items:
             search_in = str(cached_items[item][0]).lower() + " " + \

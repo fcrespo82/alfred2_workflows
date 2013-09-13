@@ -4,10 +4,10 @@
 # requires: beautifulsoup4, requests, lxml, re, shelve, sys
 
 ## CONFIG
-DAYS_OF_CACHE = 5
+DAYS_OF_CACHE = 1
 ## END CONFIG
 
-__title__ = "Search Mac Power Users show notes"
+__title__ = "Search 'Mac Power Users' show notes"
 __author__ = "Fernando Xavier de Freitas Crespo"
 __author_email__ = "fernando@crespo.in"
 __version__ = "1.3"
@@ -32,12 +32,11 @@ def get_episodes_in_page(page):
     response = requests.get(url.format(page))
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'lxml')
-        for div in soup.findAll('div'):
-            if div.get('class') and div.get('class')[0] == 'episode':
-                title = div.h3.a.text.encode('ascii', 'ignore').strip()
-                episode_number = re.search(r'.*#([0-9]{,3}).*', title).group(1)
-                subtitle = div.p.text.encode('ascii', 'ignore').strip()
-                episodes.append([episode_number, title, subtitle])
+        for div in soup.findAll('div', { "class" : "episode" }):
+            title = div.h3.a.text.encode('ascii', 'ignore').strip()
+            episode_number = re.search(r'#([0-9]{1,3}): ', title).group(1)
+            subtitle = div.p.text.encode('ascii', 'ignore').strip()
+            episodes.append([episode_number, title, subtitle])
     return episodes
 
 def add_episode_to_cache(cache, episode):
@@ -48,18 +47,16 @@ def add_episode_to_cache(cache, episode):
     return False
 
 def cache_all(cache):
-    for i in range(1, 20): # Pick last 20 pages to cache all episodes
+    for i in range(1, 3): # Pick last 20 pages to cache all episodes
         episodes_in_page_i = get_episodes_in_page(i)
         for episode in episodes_in_page_i:
-            #print "Caching episode {0}".format(episode[0])
-            print(item_template.format(episode[0], episode[1], episode[2], 'yes'))
+            #print(item_template.format(episode[0], episode[1], episode[2], 'yes'))
             add_episode_to_cache(cache, episode)
 
-def list_all():
-    for i in range(1, 20): # Pick last 20 pages to cache all episodes
-        episodes_in_page_i = get_episodes_in_page(i)
-        for episode in episodes_in_page_i:
-            print(item_template.format(episode[0], episode[1], episode[2], 'yes'))
+def cache_page_1(cached_items):
+    episodes_in_page_1 = get_episodes_in_page(1)
+    for episode in episodes_in_page_1:
+        add_episode_to_cache(cached_items, episode)
 
 def main(argv):
     global query
@@ -79,13 +76,10 @@ def main(argv):
     print('<?xml version="1.0" encoding="UTF-8"?>\n<items>')
 
     if cached_items:
-        # Force get lastest 10 episodes (firs page) to keep up to date
-        #print('Getting latest 10 episodes')
         if must_update_cache():
-            episodes_in_page_1 = get_episodes_in_page(1)
-            for episode in episodes_in_page_1:
-                #print('Found episode {0}, caching it'.format(episode))
-                add_episode_to_cache(cached_items, episode)
+            print(item_template.format("", "Cache updated", "Make your search again", "no"))
+            cache_page_1(cached_items)
+            sorted_cached_items = sorted(cached_items, reverse=True)
 
         for item in sorted_cached_items:
             search_in = str(cached_items[item][0]).lower() + " " + \
